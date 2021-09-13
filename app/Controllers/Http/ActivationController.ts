@@ -10,31 +10,36 @@ export default class ActivationController {
 
         try {
 
+
             const token = await ConfirmationToken.findBy('token', params.token)
-            const user = await User.findBy('id', token.user_id)
 
             // update the user model
-            user.activated = true
-            await user.save()
+            if (token!==null) {
+                const user =  await User.findBy('id', token.user_id)
 
-            // delete the confirmation token
-            await ConfirmationToken.query().where('token', params.token).delete()
+                if (user!==null) {
+                    user.activated = true
+                    await user.save()
 
-            //Send welcome email
-            await Mail.sendLater((message) => {
-                message
-                    .from('info@example.com')
-                    .to(user.email)
-                    .subject('Get Started With Chonkee')
-                    .htmlView('emails/welcome', {
-                        user: {
-                            first_name: user.first_name,
-                            last_name: user.last_name
-                        }
+                    await ConfirmationToken.query().where('token', params.token).delete()
+
+                    //Send welcome email
+                    await Mail.sendLater((message) => {
+                        message
+                            .from('info@example.com')
+                            .to(user.email)
+                            .subject('Get Started With Chonkee')
+                            .htmlView('emails/welcome', {
+                                user: {
+                                    first_name: user.first_name,
+                                    last_name: user.last_name
+                                }
+                            })
                     })
-            })
-            
-            return response.status(200).json({'activated': true})
+                    
+                    return response.status(200).json({'activated': true})
+                }
+            }
 
         } catch (error) {
 
@@ -48,7 +53,7 @@ export default class ActivationController {
         
     }
 
-    async resend({ request, auth, response }) {
+    async resend({ request, response }) {
 
         const resendData = request.only(['email'])
 

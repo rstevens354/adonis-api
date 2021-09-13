@@ -36,15 +36,20 @@ export default class ProjectsController {
         const user_assigned = await User.findBy('external_id', request.input('user_assigned_id'))
         const client = await Client.findBy('external_id', request.input('client_id'))
 
-        projectData.status_id = status.id
-        projectData.user_assigned_id = user_assigned.id
-        projectData.client_id = client.id
-        projectData.external_id = uuidv4()
-        projectData.user_created_id = auth.use('api').user.id
-    
-        const project = await Project.create(projectData)
+        if (client!==null && user_assigned!==null && status!==null) {
 
-        return response.status(201).json({ project })
+            projectData.status_id = status.id
+            projectData.user_assigned_id = user_assigned.id
+            projectData.client_id = client.id
+            projectData.external_id = uuidv4()
+            projectData.user_created_id = auth.use('api').user.id
+        
+            const project = await Project.create(projectData)
+
+            return response.status(201).json({ project })
+
+        }
+        
     }
     
     /**

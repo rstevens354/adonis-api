@@ -2,7 +2,7 @@ import UserInteraction from 'App/Models/UserInteraction';
 
 export default class TriggersController {
 
-    async index ({ params, response, auth }) {
+    async index ({ response, auth }) {
 
         await auth.use('api').authenticate()
 

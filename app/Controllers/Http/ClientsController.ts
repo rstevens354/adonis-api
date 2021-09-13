@@ -39,20 +39,25 @@ export default class ClientsController {
 
         const industry = await Industry.findBy('external_id', request.input('industry_id'))
 
-        clientData.industry_id = industry.id
-        clientData.user_id = auth.use('api').user.id
-        clientData.external_id = uuidv4()
-    
-        const client = await Client.create(clientData)
+        if (industry!==null) {
 
-        const contactData = request.only(['name', 'email', 'primary_number', 'secondary_number'])
+            clientData.industry_id = industry.id
+            clientData.user_id = auth.use('api').user.id
+            clientData.external_id = uuidv4()
+        
+            const client = await Client.create(clientData)
 
-        contactData.client_id = client.id
-        contactData.external_id = uuidv4()
-    
-        const contact = await Contact.create(contactData)
-       
-        return response.status(201).json({ client, contact })
+            const contactData = request.only(['name', 'email', 'primary_number', 'secondary_number'])
+
+            contactData.client_id = client.id
+            contactData.external_id = uuidv4()
+        
+            const contact = await Contact.create(contactData)
+        
+            return response.status(201).json({ client, contact })
+
+        }
+        
     }
 
     async show ({ params, response, auth }) {

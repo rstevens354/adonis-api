@@ -11,7 +11,7 @@ import ConfirmationToken from 'App/Models/ConfirmationToken';
 
 export default class AuthController {
 
-    async register({request, auth, response}) {
+    async register({request, response}) {
 
         const userData = request.only(['first_name', 'last_name', 'email', 'password'])
 
@@ -20,7 +20,6 @@ export default class AuthController {
         try {
 
             const user = await User.create(userData)
-            const token = await auth.use('api').generate(user)
 
             // create confirmation token
             const confirm = await ConfirmationToken.create({

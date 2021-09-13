@@ -39,13 +39,17 @@ export default class IntegrationsController {
 
         const recipe = await Recipe.findBy('external_id', request.input('recipe'))
 
-        userIntegrationData.user_id = auth.use('api').user.id
-        userIntegrationData.external_id = uuidv4()
-        userIntegrationData.recipe_id = recipe.id
-    
-        const integration = await UserInteraction.create(userIntegrationData)
-       
-        return response.status(201).json({integration})
+        if (recipe!==null) {
+
+            userIntegrationData.user_id = auth.use('api').user.id
+            userIntegrationData.external_id = uuidv4()
+            userIntegrationData.recipe_id = recipe.id
+        
+            const integration = await UserInteraction.create(userIntegrationData)
+        
+            return response.status(201).json({integration})
+
+        }
     
     }
 

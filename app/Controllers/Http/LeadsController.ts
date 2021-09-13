@@ -5,8 +5,6 @@ import Lead from "App/Models/Lead";
 import Client from "App/Models/Client";
 import User from "App/Models/User";
 import Status from "App/Models/Status";
-import Project from "App/Models/Project";
-
 export default class LeadsController {
 
     async index ({ response, auth }) {
@@ -32,15 +30,20 @@ export default class LeadsController {
         const user_assigned = await User.findBy('external_id', request.input('user_assigned_id'))
         const status = await Status.findBy('external_id', request.input('status_id'))
 
-        leadData.client_id = client.id
-        leadData.user_assigned_id = user_assigned.id
-        leadData.status_id = status.id
-        leadData.user_created_id = auth.use('api').user.id
-        leadData.external_id = uuidv4()
-    
-        const lead = await Lead.create(leadData)
-       
-        return response.status(201).json({ lead })
+        if (client!==null && user_assigned!==null && status!==null) {
+
+            leadData.client_id = client.id
+            leadData.user_assigned_id = user_assigned.id
+            leadData.status_id = status.id
+            leadData.user_created_id = auth.use('api').user.id
+            leadData.external_id = uuidv4()
+        
+            const lead = await Lead.create(leadData)
+        
+            return response.status(201).json({ lead })
+
+        }
+
     }
 
     async show ({ params, response, auth }) {

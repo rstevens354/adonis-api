@@ -24,6 +24,5 @@ export default class ActivateAccount extends BaseMailer {
       .subject('The email subject')
       .from('admin@example.com')
       .to('user@example.com')
-      .html(this.html)
   }
 }

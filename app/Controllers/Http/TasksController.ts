@@ -32,17 +32,22 @@ export default class TasksController {
         const client        = await Client.findBy('external_id', request.input('client_id'))
         const project       = await Project.findBy('external_id', request.input('project_id'))
 
-        taskData.client_id          = client.id
-        taskData.user_assigned_id   = user_assigned.id
-        taskData.status_id          = status.id
-        taskData.project_id         = project.id
+        if (client!==null && user_assigned!==null && status!==null && project!==null) {
 
-        taskData.user_created_id = auth.use('api').user.id
-        taskData.external_id = uuidv4()
-    
-        const task = await Task.create(taskData)
-       
-        return response.status(201).json({ task })
+            taskData.client_id          = client.id
+            taskData.user_assigned_id   = user_assigned.id
+            taskData.status_id          = status.id
+            taskData.project_id         = project.id
+
+            taskData.user_created_id = auth.use('api').user.id
+            taskData.external_id = uuidv4()
+        
+            const task = await Task.create(taskData)
+        
+            return response.status(201).json({ task })
+
+        }
+
     }
 
     async show ({ params, response, auth }) {
